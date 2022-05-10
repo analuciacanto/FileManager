@@ -19,3 +19,4 @@ Repositório destinado ao desenvolvimento de um gerenciador de arquivos em java 
 - [ ] Copiar arquivos
 - [ ] Renomear arquivos
 - [ ] Deletar arquivos
+- [ ] Melhora no layout 
