@@ -5,9 +5,9 @@ Repositório destinado ao desenvolvimento de um gerenciador de arquivos em java 
 # Tarefas
 
 - [x] Layout Inicial 
-- [ ] Definir permissões de acesso ao dispositivo
-- [ ] Solicitar ao usuário o acesso aos arquivos 
-- [ ] Visualizar arquivos do diretório interno
+- [x] Definir permissões de acesso ao dispositivo
+- [x] Solicitar ao usuário o acesso aos arquivos 
+- [x] Visualizar arquivos do diretório interno
 - [ ] Visualizar arquivos do diretório externo (sd/card etc... )
 - [ ] Navegar entre os arquivos
 - [ ] Exibir caminho do diretório
