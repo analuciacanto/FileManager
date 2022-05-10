@@ -11,6 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="50dp" />
 
+    <TextView
+        android:id="@+id/pathOutput"
+        android:background="@color/whiteColor"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="30dp" />
+
+
+
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"

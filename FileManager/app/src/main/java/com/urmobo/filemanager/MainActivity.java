@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout1);
 
+
         final Button b1 = findViewById(R.id.b1);
 
         b1.setOnClickListener(new View.OnClickListener() {
@@ -31,17 +35,6 @@ public class MainActivity extends AppCompatActivity {
                 b1.setText("pressed");
             }
         });
-
-        final ListView listView = findViewById(R.id.listView);
-        final TextAdapter textAdapter1 = new TextAdapter();
-        listView.setAdapter(textAdapter1);
-        List<String> example = new ArrayList<>();
-
-        for (int i = 0; i < 100; i++){
-            example.add(String.valueOf(i));
-        }
-        System.out.println(example);
-        textAdapter1.setData(example);
 
     }
 
@@ -114,12 +107,40 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    private boolean isFileManagerInitialized = false;
     @Override
     protected void onResume(){
         super.onResume();
         if (arePermissionsDenied()){
             //requestPermissions
             requestPermissions(PERMISSIONS, REQUEST_PERMISSIONS);
+        }
+        if (!isFileManagerInitialized){
+            final String rootPath = String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
+            final File dir = new File(rootPath);
+
+
+            final File[] files = dir.listFiles();
+
+            final TextView pathOutput = findViewById(R.id.pathOutput);
+
+
+            final int filesFoundCount = files.length;
+,
+ ,           final ListView listView = findViewById(R.id.listView);
+            final TextAdapter textAdapter1 = new TextAdapter();
+            listView.setAdapter(textAdapter1);
+
+            List<String> filesList = new ArrayList<>();
+
+            pathOutput.setText(rootPath.substring(rootPath.lastIndexOf('/')+1));
+
+            for (int i = 0; i < filesFoundCount; i++){
+;                filesList.add(String.valueOf(files[i].getName()));
+            }
+
+            textAdapter1.setData(filesList);
+            isFileManagerInitialized = true;
         }
     }
 
@@ -133,6 +154,9 @@ public class MainActivity extends AppCompatActivity {
             //Need review
             ((ActivityManager) Objects.requireNonNull(this.getSystemService(ACTIVITY_SERVICE))).clearApplicationUserData();
             recreate();
+        }
+        else{
+            onResume();
         }
     }
 
