@@ -43,22 +43,24 @@ public class FileAdapter extends RecyclerView.Adapter<FileViewHolder> {
         }
         else {
             holder.tvSize.setText(Formatter.formatShortFileSize(context, file.get(position).length()));
+
+            if (file.get(position).getName().toLowerCase().endsWith(".jpeg") || file.get(position).getName().toLowerCase().endsWith(".jpg") || file.get(position).getName().toLowerCase().endsWith(".png") ){
+                holder.imgFile.setImageResource(R.drawable.ic_image);
+            }
+            if (file.get(position).getName().toLowerCase().endsWith(".pdf")){
+                holder.imgFile.setImageResource(R.drawable.ic_pdf);
+            }
+            if (file.get(position).getName().toLowerCase().endsWith(".mp4") ||  file.get(position).getName().toLowerCase().endsWith(".avi")){
+                holder.imgFile.setImageResource(R.drawable.ic_video);
+            }
+            if (file.get(position).getName().toLowerCase().endsWith(".mp3") || file.get(position).getName().toLowerCase().endsWith(".wav")) {
+                holder.imgFile.setImageResource(R.drawable.ic_baseline_audiotrack_24);
+            }
+            else {
+                holder.imgFile.setImageResource(R.drawable.ic_file);
+            }
         }
-        if (file.get(position).getName().toLowerCase().endsWith(".jpeg") || file.get(position).getName().toLowerCase().endsWith(".jpg") || file.get(position).getName().toLowerCase().endsWith(".png") ){
-            holder.imgFile.setImageResource(R.drawable.ic_image);
-        }
-        if (file.get(position).getName().toLowerCase().endsWith(".pdf")){
-            holder.imgFile.setImageResource(R.drawable.ic_pdf);
-        }
-        if (file.get(position).getName().toLowerCase().endsWith(".mp4") ||  file.get(position).getName().toLowerCase().endsWith(".avi")){
-            holder.imgFile.setImageResource(R.drawable.ic_video);
-        }
-        if (file.get(position).getName().toLowerCase().endsWith(".mp3") || file.get(position).getName().toLowerCase().endsWith(".wav")) {
-            holder.imgFile.setImageResource(R.drawable.ic_baseline_audiotrack_24);
-        }
-        else {
-            holder.imgFile.setImageResource(R.drawable.ic_file);
-        }
+
     }
 
     @Override
