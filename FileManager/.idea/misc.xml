@@ -3,13 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="app/src/main/res/drawable/ic_baseline_audiotrack_24.xml" value="0.129" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.14583333333333334" />
-        <entry key="app/src/main/res/layout/file_container.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/fragment_internal_storage.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/item.xml" value="0.14583333333333334" />
-        <entry key="app/src/main/res/layout/nav_header.xml" value="0.14583333333333334" />
-        <entry key="app/src/main/res/menu/nav_menu.xml" value="0.19375" />
+        <entry key="../../../../../../layout/custom_preview.xml" value="0.125" />
+        <entry key="app/src/main/res/drawable-v24/custom_border.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.149" />
+        <entry key="app/src/main/res/layout/custom_border.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/file_container.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/option_dialog.xml" value="0.190625" />
+        <entry key="app/src/main/res/layout/option_layout.xml" value="0.190625" />
+        <entry key="app/src/main/res/menu/nav_menu.xml" value="0.4815533980582524" />
       </map>
     </option>
   </component>

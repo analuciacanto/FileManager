@@ -1,11 +1,15 @@
 package com.urmobo.filemanager.fragments;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,14 +24,17 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.urmobo.filemanager.FileAdapter;
+import com.urmobo.filemanager.FileOpener;
+import com.urmobo.filemanager.OnFileSelectedListener;
 import com.urmobo.filemanager.R;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class InternalStorageFragment extends Fragment {
+public class InternalStorageFragment extends Fragment implements OnFileSelectedListener {
 
     private RecyclerView recyclerView;
     private FileAdapter fileAdapter;
@@ -35,6 +42,8 @@ public class InternalStorageFragment extends Fragment {
     private ImageView img_back;
     private TextView tv_pathHolder;
     File storage;
+    String data;
+    String[] items = {"Copy", "Rename", "Delete", "Move"};
 
     View view;
 
@@ -49,6 +58,15 @@ public class InternalStorageFragment extends Fragment {
 
         String internalStorage = System.getenv("EXTERNAL_STORAGE");
         storage = new File(internalStorage);
+
+        try {
+            data = getArguments().getString("path");
+            File file = new File(data);
+            storage = file;
+
+        } catch (Exception e ){
+            e.printStackTrace();
+        }
 
         tv_pathHolder.setText(storage.getAbsolutePath());
         runtimePermission();
@@ -96,9 +114,81 @@ public class InternalStorageFragment extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         fileList = new ArrayList<>();
         fileList.addAll(findFiles(storage));
-        fileAdapter = new FileAdapter(getContext(), fileList);
+        fileAdapter = new FileAdapter(getContext(), fileList, this);
         recyclerView.setAdapter(fileAdapter);
 
     }
 
+    @Override
+    public void onFileClicked(@NonNull File file) {
+        if (file.isDirectory()){
+            Bundle bundle = new Bundle();
+            bundle.putString("path", file.getAbsolutePath());
+            InternalStorageFragment internalStorageFragment = new InternalStorageFragment();
+            internalStorageFragment.setArguments(bundle);
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container, internalStorageFragment).addToBackStack(null).commit();
+
+        }
+        else{
+            try {
+                FileOpener.openFile(getContext(), file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onFileLongClicked(File file) {
+
+        final Dialog optionDialog = new Dialog( getContext());
+        optionDialog.setContentView(R.layout.option_dialog);
+        optionDialog.setTitle("Select Options");
+        ListView options = (ListView) optionDialog.findViewById(R.id.List);
+
+        CustomAdapter customAdapter = new CustomAdapter();
+        options.setAdapter(customAdapter);
+        optionDialog.show();
+
+
+    }
+
+    class CustomAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return items.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return items[position];
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View myView = getLayoutInflater().inflate(R.layout.option_layout, null);
+            TextView textOptions = myView.findViewById(R.id.textOption);
+            ImageView imgOptions = myView.findViewById(R.id.imgOption);
+            textOptions.setText(items[position]);
+            if (items[position].equals("Copy")) {
+                imgOptions.setImageResource(R.drawable.ic_copy);
+            }
+            else if (items[position].equals("Rename")) {
+                imgOptions.setImageResource(R.drawable.ic_rename);
+            }
+            else if (items[position].equals("Delete")) {
+                imgOptions.setImageResource(R.drawable.ic_delete);
+            }
+            else if (items[position].equals("Move")) {
+                imgOptions.setImageResource(R.drawable.ic_move);
+            }
+            return myView;
+        }
+    }
 }
