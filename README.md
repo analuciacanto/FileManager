@@ -8,7 +8,7 @@ Repositório destinado ao desenvolvimento de um gerenciador de arquivos em java 
 - [x] Definir permissões de acesso ao dispositivo
 - [x] Solicitar ao usuário o acesso aos arquivos 
 - [x] Visualizar arquivos do diretório interno
-- [ ] Visualizar arquivos do diretório externo (sd/card etc... )
+- [x] Visualizar arquivos do diretório externo (sd/card etc... )
 - [x] Navegar entre os arquivos
 - [x] Exibir caminho do diretório
 - [x] Permir voltar ao diretório pai
@@ -17,6 +17,6 @@ Repositório destinado ao desenvolvimento de um gerenciador de arquivos em java 
 - [x] Abrir arquivos com diálogo do android
 - [ ] Mover arquivos 
 - [ ] Copiar arquivos
-- [ ] Renomear arquivos
-- [ ] Deletar arquivos
+- [x] Renomear arquivos
+- [x] Deletar arquivos
 - [ ] Melhora no layout 
