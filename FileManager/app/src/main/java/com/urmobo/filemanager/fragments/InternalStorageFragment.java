@@ -1,16 +1,21 @@
 package com.urmobo.filemanager.fragments;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -139,7 +144,7 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
     }
 
     @Override
-    public void onFileLongClicked(File file) {
+    public void onFileLongClicked(File file, int position) {
 
         final Dialog optionDialog = new Dialog( getContext());
         optionDialog.setContentView(R.layout.option_dialog);
@@ -150,6 +155,60 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
         options.setAdapter(customAdapter);
         optionDialog.show();
 
+        options.setOnItemClickListener((parent, view, position1, id) -> {
+            String selectedItem = parent.getItemAtPosition(position1).toString();
+
+            switch (selectedItem){
+                case "Rename":
+                    AlertDialog.Builder renameDialog = new AlertDialog.Builder(getContext());
+                    renameDialog.setTitle("Rename File");
+                    final EditText name = new EditText(getContext());
+                    renameDialog.setView(name);
+
+                     renameDialog.setPositiveButton("Ok", (dialog, which) -> {
+                         String new_name = name.getEditableText().toString();
+                         String extention = file.getAbsolutePath().substring(file.getAbsolutePath().lastIndexOf("."));
+                         File current = new File(file.getAbsolutePath());
+                         File destination = new File(file.getAbsolutePath().replace(file.getName(), new_name + extention));
+
+                         if (current.renameTo(destination)){
+                                 fileList.set(position1, destination);
+                                 fileAdapter.notifyItemChanged(position1);
+;
+                                 Toast.makeText(getContext(), "Renamed!!", Toast.LENGTH_SHORT).show();
+
+                         }
+                         else{
+                             Toast.makeText(getContext(), "Couldn't rename!", Toast.LENGTH_SHORT).show();
+                         }
+                     });
+                     renameDialog.setNegativeButton("Cancel", (dialog, which) -> optionDialog.cancel());
+                     AlertDialog alertDialog_rename = renameDialog.create();
+                    alertDialog_rename.show();
+
+                    break;
+
+                case "Delete":
+                    AlertDialog.Builder deleteDialog = new AlertDialog.Builder(getContext());
+                    deleteDialog.setTitle("Delete" + file.getName() + "?");
+                    deleteDialog.setPositiveButton("Yes", (dialog, which) -> {
+                        file.delete();
+                        fileList.remove(position1);
+                        fileAdapter.notifyDataSetChanged();
+                        Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
+                    });
+                    deleteDialog.setNegativeButton("No", (dialog, which) -> optionDialog.cancel());
+
+                    AlertDialog alertDialog_delete = deleteDialog.create();
+                    alertDialog_delete.show();
+                    break;
+
+
+
+
+            }
+
+        });
 
     }
 
