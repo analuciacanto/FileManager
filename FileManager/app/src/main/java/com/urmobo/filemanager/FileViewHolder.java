@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class FileViewHolder extends RecyclerView.ViewHolder {
 
-    public TextView tvName, tvSize;
+    public TextView tvName;
     public CardView container;
     public ImageView imgFile;
 
@@ -18,7 +18,6 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
             super(itemView);
 
             tvName = itemView.findViewById(R.id.tv_filename);
-            tvSize = itemView.findViewById(R.id.tvFileSize);
             container = itemView.findViewById(R.id.container);
             imgFile = itemView.findViewById(R.id.img_fileType);
         }

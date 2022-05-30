@@ -1,26 +1,23 @@
 package com.urmobo.filemanager.fragments;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.media.Image;
+
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import android.widget.BaseAdapter;
+
+import android.widget.ImageView;
+
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.karumi.dexter.Dexter;
@@ -37,7 +34,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class InternalStorageFragment extends Fragment implements OnFileSelectedListener {
 
@@ -46,11 +42,35 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
     private List<File> fileList;
     private ImageView img_back;
     private TextView tv_pathHolder;
+    private ArrayList <File> selectedFiles = new ArrayList<>();
+
     File storage;
     String data;
     String[] items = {"Copy", "Rename", "Delete", "Move"};
-
+    Boolean isLoading = false;
     View view;
+
+    public void populate() {
+
+
+
+        String rootPath = String.valueOf(Environment.getExternalStorageDirectory());
+        fileList = new ArrayList<>();
+        storage = new File(rootPath);
+
+        isLoading = true;
+        ArrayList<File> files = findFiles(storage);
+
+        if (files.size() > 0){
+            fileList.addAll(files);
+        }
+        else{
+            // TODO
+            //MESSAGE OF NONE FILES.
+        }
+
+        isLoading = false;
+    }
 
     @Nullable
     @Override
@@ -61,8 +81,7 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
         tv_pathHolder = view.findViewById(R.id.tv_pathHolder);
         img_back = view.findViewById(R.id.img_back);
 
-        String internalStorage = System.getenv("EXTERNAL_STORAGE");
-        storage = new File(internalStorage);
+        populate();
 
         try {
             data = getArguments().getString("path");
@@ -94,42 +113,42 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
                 permissionToken.continuePermissionRequest();
             }
         }).check();
-        
+
     }
     public ArrayList<File> findFiles(File file) {
-        ArrayList<File> arrayList = new ArrayList<>();
+       ArrayList<File> arrayList = new ArrayList<>();
         File[] files = file.listFiles();
 
-        for ( File singleFile: files) {
-            if (singleFile.isDirectory() && !singleFile.isHidden()){
-                arrayList.add(singleFile);
-            }
-        }
-        for (File singleFile: files)
-            {
+        if (files != null) {
+            for ( File singleFile: files) {
                 arrayList.add(singleFile);
             }
 
+        }
         return arrayList;
+
+
     }
 
     private void displayFiles(){
         recyclerView = view.findViewById(R.id.recycler_internal);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        fileList = new ArrayList<>();
-        fileList.addAll(findFiles(storage));
-        fileAdapter = new FileAdapter(getContext(), fileList, this);
-        recyclerView.setAdapter(fileAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
+        if (!isLoading) {
+            fileAdapter = new FileAdapter(getContext(), fileList, selectedFiles, this, false);
+            recyclerView.setAdapter(fileAdapter);
+        }
     }
+
 
     @Override
     public void onFileClicked(@NonNull File file) {
         if (file.isDirectory()){
+            InternalStorageFragment internalStorageFragment = new InternalStorageFragment();
             Bundle bundle = new Bundle();
             bundle.putString("path", file.getAbsolutePath());
-            InternalStorageFragment internalStorageFragment = new InternalStorageFragment();
             internalStorageFragment.setArguments(bundle);
             getFragmentManager().beginTransaction().replace(R.id.fragment_container, internalStorageFragment).addToBackStack(null).commit();
 
@@ -143,9 +162,27 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
         }
     }
 
+    public void selectAllFiles(){
+         populate();
+
+        if (fileList.size() > 0) {
+            selectedFiles.addAll(fileList);
+            fileAdapter.notifyAll();
+        }
+    }
+
+
     @Override
     public void onFileLongClicked(File file, int position) {
+        if (selectedFiles.contains(file)){
+            selectedFiles.remove(file);
+        }
+        else {
+            selectedFiles.add(file);
+        }
+        fileAdapter.notifyItemChanged(position);
 
+ /*
         final Dialog optionDialog = new Dialog( getContext());
         optionDialog.setContentView(R.layout.option_dialog);
         optionDialog.setTitle("Select Options");
@@ -184,7 +221,7 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
                      });
                      renameDialog.setNegativeButton("Cancel", (dialog, which) -> optionDialog.cancel());
                      AlertDialog alertDialog_rename = renameDialog.create();
-                    alertDialog_rename.show();
+                        alertDialog_rename.show();
 
                     break;
 
@@ -208,9 +245,12 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
 
             }
 
-        });
+        });*/
 
     }
+
+
+
 
     class CustomAdapter extends BaseAdapter {
 
@@ -231,7 +271,7 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View myView = getLayoutInflater().inflate(R.layout.option_layout, null);
+            View myView = getLayoutInflater().inflate(R.layout.option_dialog, null);
             TextView textOptions = myView.findViewById(R.id.textOption);
             ImageView imgOptions = myView.findViewById(R.id.imgOption);
             textOptions.setText(items[position]);

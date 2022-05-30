@@ -8,6 +8,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -17,7 +18,7 @@ import com.urmobo.filemanager.fragments.InternalStorageFragment;
 import com.urmobo.filemanager.fragments.SDCardFragment;
 
 
-public class MainActivity extends  AppCompatActivity implements  NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends  AppCompatActivity implements  NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
 
@@ -37,17 +38,13 @@ public class MainActivity extends  AppCompatActivity implements  NavigationView.
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
-        navigationView.setCheckedItem(R.id.nav_home);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new InternalStorageFragment()).commit();
+        navigationView.setCheckedItem(R.id.nav_internal);
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case R.id.nav_home:
-                HomeFragment homeFragment = new HomeFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, homeFragment).addToBackStack(null).commit();
-                break;
             case R.id.nav_internal:
                 InternalStorageFragment internalStorageFragment = new InternalStorageFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, internalStorageFragment).addToBackStack(null).commit();
@@ -57,12 +54,35 @@ public class MainActivity extends  AppCompatActivity implements  NavigationView.
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, sdCardFragment).addToBackStack(null).commit();
                 break;
             case R.id.nav_about:
-                Toast.makeText(this, "About", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Sobre", Toast.LENGTH_SHORT).show();
                 break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menuOptions) {
+        getMenuInflater().inflate(R.menu.menu, menuOptions);
+
+
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull  MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.select_all:
+                InternalStorageFragment internalStorageFragment = new InternalStorageFragment();
+                internalStorageFragment.selectAllFiles();
+                System.out.println("SELEEEEECT");
+                break;
+
+        }
+        return true;
+    }
+
     @Override
     public void onBackPressed() {
         getSupportFragmentManager().popBackStackImmediate();

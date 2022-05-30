@@ -47,6 +47,7 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
     private List<File> fileList;
     private ImageView img_back;
     private TextView tv_pathHolder;
+    private ArrayList <File> selectedFiles;
     File storage;
     String data;
     String[] items = {"Copy", "Rename", "Delete", "Move"};
@@ -130,7 +131,7 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         fileList = new ArrayList<>();
         fileList.addAll(findFiles(storage));
-        fileAdapter = new FileAdapter(getContext(), fileList, this);
+        fileAdapter = new FileAdapter(getContext(), fileList, selectedFiles, this, false);
         recyclerView.setAdapter(fileAdapter);
 
     }
