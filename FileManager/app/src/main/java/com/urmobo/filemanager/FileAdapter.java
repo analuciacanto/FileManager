@@ -11,12 +11,12 @@ import java.util.List;
 public class FileAdapter extends RecyclerView.Adapter<FileViewHolder> {
 
     private Context context;
-    private List<File> file;
+    private List<ModelFile> file;
     private OnFileSelectedListener listener;
     ArrayList<File> selected;
     private Boolean selectedFile;
 
-    public FileAdapter(Context context, List<File> file, ArrayList<File> selected, OnFileSelectedListener listener, Boolean selectedFile) {
+    public FileAdapter(Context context, List<ModelFile> file, ArrayList<File> selected, OnFileSelectedListener listener, Boolean selectedFile) {
         this.context = context;
         this.file = file;
         this.selected = selected;
