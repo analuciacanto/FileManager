@@ -29,7 +29,6 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.urmobo.filemanager.FileAdapter;
 import com.urmobo.filemanager.FileOpener;
 import com.urmobo.filemanager.OnFileSelectedListener;
 import com.urmobo.filemanager.R;
@@ -39,7 +38,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
+/*
 public class SDCardFragment extends Fragment implements OnFileSelectedListener {
 
     private RecyclerView recyclerView;
@@ -156,7 +155,7 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
     }
 
     @Override
-    public void onFileLongClicked(File file, int position) {
+    public void onFileLongClicked(ModelFile file, int position) {
 
         final Dialog optionDialog = new Dialog( getContext());
         optionDialog.setContentView(R.layout.option_dialog);
@@ -263,3 +262,4 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
         }
     }
 }
+*/

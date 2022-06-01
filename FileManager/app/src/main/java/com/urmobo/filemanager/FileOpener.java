@@ -11,10 +11,10 @@ import java.io.IOException;
 import java.util.Locale;
 
 public class FileOpener {
-    public static void openFile(Context context, File file) throws IOException{
+    public static void openFile(Context context, ModelFile file) throws IOException{
 
-        File selectedFile = file;
-        Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
+        File selectedFile = file.getFile();
+        Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file.getFile());
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
 

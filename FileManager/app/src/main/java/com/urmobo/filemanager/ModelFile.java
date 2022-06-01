@@ -1,7 +1,8 @@
 package com.urmobo.filemanager;
 import java.io.File;
+import java.io.Serializable;
 
-public class ModelFile {
+public class ModelFile implements Serializable {
     private File file;
     private boolean isChecked;
 

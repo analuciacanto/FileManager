@@ -1,6 +1,7 @@
 package com.urmobo.filemanager;
 
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,7 +14,6 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
     public TextView tvName;
     public CardView container;
     public ImageView imgFile;
-
 
     public FileViewHolder(@NonNull View itemView) {
             super(itemView);
