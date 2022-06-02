@@ -130,6 +130,7 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
             //MESSAGE OF NONE FILES.
         }
 
+
         isLoading = false;
 
 
@@ -160,9 +161,8 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
     }
 
     @Override
-    public void onFileLongClicked(ModelFile file, int position) {
+    public void onFileLongClicked(ModelFile file) {
         file.setChecked(!file.isChecked());
-        fileAdapter.notifyItemChanged(position);
     }
 
     @Override
@@ -171,11 +171,18 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    public void selectAll(){
+       for (ModelFile modelFile: fileList ){
+           modelFile.setChecked(true);
+       }
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.select_all:
                 System.out.println("SELEEEEECT");
+                selectAll();
                 fileAdapter.notifyDataSetChanged();
                 break;
         }

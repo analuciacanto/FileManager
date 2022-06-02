@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,20 +91,18 @@ public class MultiFileAdapter extends RecyclerView.Adapter<MultiFileAdapter.File
                 itemView.setBackgroundColor(Color.LTGRAY);
             }
 
-          /*  itemView.setOnClickListener(itemView -> listener.onFileClicked(
-                    file)
-            ); */
+            itemView.setBackgroundColor(file.isChecked() ? Color.LTGRAY : Color.WHITE);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    file.setChecked(!file.isChecked());
-                    if (file.isChecked()){
-                        view.setBackgroundColor(Color.LTGRAY);
-                    }
-                }
+
+           itemView.setOnClickListener(itemView ->
+                   listener.onFileClicked(file)
+            );
+
+            itemView.setOnLongClickListener(itemView -> {
+                listener.onFileLongClicked(file);
+                itemView.setBackgroundColor(file.isChecked() ? Color.LTGRAY : Color.WHITE);
+                return true;
             });
-
         }
     }
 }

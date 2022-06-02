@@ -56,25 +56,7 @@ public class MainActivity extends  AppCompatActivity implements  NavigationView.
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
-/*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menuOptions) {
-        getMenuInflater().inflate(R.menu.menu, menuOptions);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull  MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.select_all:
-                InternalStorageFragment internalStorageFragment = new InternalStorageFragment();
-
-                System.out.println("SELEEEEECT");
-                break;
-        }
-        return true;
-    }
-*/
     @Override
     public void onBackPressed() {
         getSupportFragmentManager().popBackStackImmediate();
