@@ -2,6 +2,7 @@ package com.urmobo.filemanager.fragments;
 
 import android.Manifest;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -10,9 +11,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -129,10 +133,7 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
             // TODO
             //MESSAGE OF NONE FILES.
         }
-
-
         isLoading = false;
-
 
         if (!isLoading) {
             fileAdapter = new MultiFileAdapter(getContext(), fileList, this);
@@ -171,20 +172,80 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+       /* int filesSelected = fileAdapter.getFilesSelected().size();
+
+        if (filesSelected > 1){
+            menu.removeItem(R.id.rename);
+        }
+        else if (filesSelected == 0) {
+            menu.removeItem(R.id.rename);
+            menu.removeItem(R.id.remove);
+            menu.removeItem(R.id.move);
+            menu.removeItem(R.id.copy);
+        } */
+    }
+
     public void selectAll(){
        for (ModelFile modelFile: fileList ){
            modelFile.setChecked(true);
        }
+        fileAdapter.notifyDataSetChanged();
+    }
+
+    public void rename(File file) {
+        ArrayList<ModelFile> selectedFiles = fileAdapter.getFilesSelected();
+    }
+
+    public void remove() {
+        ArrayList<ModelFile> selectedFiles = fileAdapter.getFilesSelected();
+        AlertDialog.Builder deleteDialog = new AlertDialog.Builder(getContext());
+
+        if (selectedFiles.size() == 1) {
+            deleteDialog.setTitle("Deseja remover " + selectedFiles.get(0).getFile().getName() + "?");
+        }
+        else {
+            deleteDialog.setTitle("Deseja remover "+ selectedFiles.size() + " arquivos ?");
+        }
+
+        deleteDialog.setPositiveButton("Sim", (dialog, which) -> {
+            boolean isRemoved = false;
+            for (ModelFile file: selectedFiles) {
+                isRemoved = file.getFile().delete();
+                //fileList.remove(file);
+            }
+            fileAdapter.notifyDataSetChanged();
+            if (isRemoved)
+                Toast.makeText(getContext(), "Removido", Toast.LENGTH_SHORT).show();
+            else {
+                Toast.makeText(getContext(), "Erro inesperado", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        deleteDialog.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel() );
+
+        AlertDialog alertDialog_delete = deleteDialog.create();
+        alertDialog_delete.show();
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.select_all:
-                System.out.println("SELEEEEECT");
                 selectAll();
                 fileAdapter.notifyDataSetChanged();
                 break;
+            case R.id.rename:
+                break;
+            case R.id.copy:
+                break;
+            case R.id.remove:
+                remove();
+                break;
+
+
+
         }
         return true;
 

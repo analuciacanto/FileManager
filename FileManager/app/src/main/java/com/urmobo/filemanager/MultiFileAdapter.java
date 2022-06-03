@@ -105,7 +105,18 @@ public class MultiFileAdapter extends RecyclerView.Adapter<MultiFileAdapter.File
             });
         }
     }
+
+    public ArrayList<ModelFile> getFilesSelected() {
+        ArrayList<ModelFile> selected = new ArrayList<>();
+        for (int i = 0; i < file.size(); i++) {
+            if (file.get(i).isChecked()) {
+                selected.add(file.get(i));
+            }
+        }
+        return selected;
+    }
 }
+
 
 
 
