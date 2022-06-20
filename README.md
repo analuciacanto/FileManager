@@ -20,7 +20,7 @@ Repositório destinado ao desenvolvimento de um gerenciador de arquivos em java 
 - [x] Melhora no layout 
 - [ ] Mover arquivos 
 - [ ] Copiar arquivos
-- [ ] Pegar arquivos do cartão de memória
+- [x] Pegar arquivos do cartão de memória
 - [ ] Melhorar primeira vez no app
 - [ ] Refactor
 
