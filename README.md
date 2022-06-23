@@ -12,11 +12,15 @@ Repositório destinado ao desenvolvimento de um gerenciador de arquivos em java 
 - [x] Navegar entre os arquivos
 - [x] Exibir caminho do diretório
 - [x] Permir voltar ao diretório pai
-- [ ] Selecionar arquivos e diretórios 
-- [ ] Permitir selecionar todos (botão)
+- [x] Selecionar arquivos e diretórios 
+- [x] Permitir selecionar todos (botão)
 - [x] Abrir arquivos com diálogo do android
-- [ ] Mover arquivos 
-- [ ] Copiar arquivos
 - [x] Renomear arquivos
 - [x] Deletar arquivos
-- [ ] Melhora no layout 
+- [x] Melhora no layout 
+- [ ] Mover arquivos 
+- [ ] Copiar arquivos
+- [x] Pegar arquivos do cartão de memória
+- [ ] Melhorar primeira vez no app
+- [ ] Refactor
+
