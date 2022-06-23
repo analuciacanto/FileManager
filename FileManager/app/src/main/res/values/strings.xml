@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FileManager</string>
+    <string name="app_name">Gerenciador de arquivos</string>
     <string name="Open_Drawer"> Open navigation Drawer</string>
     <string name="Close_Drawer"> Close navigation Drawer</string>
 

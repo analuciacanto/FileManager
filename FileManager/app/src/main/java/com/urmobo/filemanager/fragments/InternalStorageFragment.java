@@ -2,10 +2,8 @@ package com.urmobo.filemanager.fragments;
 import android.Manifest;
 
 import android.app.AlertDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.provider.Settings;
 
 import android.net.Uri;
@@ -26,9 +24,10 @@ import android.widget.Toast;
 
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -47,10 +46,13 @@ import com.urmobo.filemanager.OnFileSelectedListener;
 import com.urmobo.filemanager.R;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,11 +63,6 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
     private MultiFileAdapter fileAdapter;
     private ImageView img_back;
     private TextView tv_pathHolder;
-    private ArrayList<File> selectedFiles = new ArrayList<>();
-
-    ActivityResultLauncher<String[]> activityResultLauncher;
-    private boolean WRITE_PERMISSION = false;
-    private boolean READ_PERMISSION = false;
 
     List<ModelFile> fileList;
     File storage;
@@ -73,6 +70,7 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
     Boolean isLoading = false;
     View view;
     String rootPath;
+    private Menu menu;
 
     @Nullable
     @Override
@@ -85,17 +83,11 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
         tv_pathHolder = view.findViewById(R.id.tv_pathHolder);
         img_back = view.findViewById(R.id.img_back);
 
-
-        if (!Environment.isExternalStorageManager()){
-            if (requestAccessPemission()){
-                displayFiles();
-            }
-        }
-
-        runtimePermission();
-
         rootPath = String.valueOf(Environment.getExternalStorageDirectory());
         storage = new File(rootPath);
+
+
+        setHasOptionsMenu(true);
 
         try {
             data = getArguments().getString("path");
@@ -106,31 +98,39 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
             e.printStackTrace();
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()){
+                requestAccessPermissions();
+            }
+        }
+
+        runtimePermission();
         tv_pathHolder.setText(storage.getAbsolutePath());
 
-        setHasOptionsMenu(true);
         return view;
     }
 
-    private boolean requestAccessPemission() {
-            try{
-                Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
-                startActivity(
-                        new Intent(
-                                Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-                                uri
-                        )
-                );
-                return true;
-            } catch (Error e){
-                System.err.println(e);
-                return false;
-            }
+     private void requestAccessPermissions() {
+        Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+        Intent intent = new Intent(
+                Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                uri);
+        ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        if (Environment.isExternalStorageManager()) {
+                            runtimePermission();
+                        }
+                    }
+                }
+
+        );
+        startActivityForResult.launch(intent);
     }
 
-    private void runtimePermission() {
 
-        if (Environment.isExternalStorageManager()) {
+    private void runtimePermission() {
             Dexter.withContext(getContext()).withPermissions(
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -138,7 +138,7 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
 
                 @Override
                 public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
-                        displayFiles();
+                   displayFiles();
                 }
 
                 @Override
@@ -146,7 +146,7 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
                     permissionToken.continuePermissionRequest();
                 }
             }).check();
-        }
+
     }
 
     public ArrayList<ModelFile> findFiles(File file) {
@@ -158,7 +158,6 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
                 ModelFile modelFile = new ModelFile(singleFile);
                 arrayList.add(modelFile);
             }
-
         }
         return arrayList;
     }
@@ -220,17 +219,11 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-       /* int filesSelected = fileAdapter.getFilesSelected().size();
-
-        if (filesSelected > 1){
-            menu.removeItem(R.id.rename);
-        }
-        else if (filesSelected == 0) {
-            menu.removeItem(R.id.rename);
-            menu.removeItem(R.id.remove);
-            menu.removeItem(R.id.move);
-            menu.removeItem(R.id.copy);
-        } */
+        this.menu=menu;
+        menu.removeItem(R.id.move);
+        //menu.removeItem(R.id.copy);
+        updateMenuItems(menu);
+        super.onPrepareOptionsMenu(menu);
     }
 
     public void selectAll(){
@@ -242,6 +235,7 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
 
     public void rename() {
         ArrayList<ModelFile> selectedFiles = fileAdapter.getFilesSelected();
+
         if (selectedFiles.size() == 1 ) {
             File file = selectedFiles.get(0).getFile();
             AlertDialog.Builder renameDialog = new AlertDialog.Builder(getContext());
@@ -251,25 +245,53 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
 
             renameDialog.setPositiveButton("Ok", (dialog, which) -> {
                 String new_name = name.getEditableText().toString();
-                String extention = file.getAbsolutePath().substring(file.getAbsolutePath().lastIndexOf("."));
                 File current = new File(file.getAbsolutePath());
-                File destination = new File(file.getAbsolutePath().replace(file.getName(), new_name + extention));
-
-                if (current.renameTo(destination)){
-
-
-                    Toast.makeText(getContext(), "Renamed!!", Toast.LENGTH_SHORT).show();
+                ModelFile destinationModelFile;
+                if (!file.isDirectory()) {
+                    String extention = file.getAbsolutePath().substring(file.getAbsolutePath().lastIndexOf("."));
+                        destinationModelFile = new ModelFile(new File(file.getAbsolutePath().replace(file.getName(), new_name + extention)));
                 }
                 else{
-                    Toast.makeText(getContext(), "Couldn't rename!", Toast.LENGTH_SHORT).show();
+                        destinationModelFile = new ModelFile(new File(file.getAbsolutePath().replace(file.getName(), new_name)));
+                }
+
+                if (current.renameTo(destinationModelFile.getFile())){
+                    fileList.set(fileList.indexOf(selectedFiles.get(0)), destinationModelFile);
+                    fileAdapter.notifyDataSetChanged();
+                    Toast.makeText(getContext(), "Renomeado", Toast.LENGTH_SHORT).show();
+
+                }
+                else{
+                    Toast.makeText(getContext(), "Não foi possível renomear", Toast.LENGTH_SHORT).show();
                 }
             });
 
             renameDialog.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
             AlertDialog alertDialog_rename = renameDialog.create();
             alertDialog_rename.show();
-
         }
+    }
+
+
+    public boolean deleteFiles( ArrayList<ModelFile> selectedFiles){
+        boolean removed = false;
+        for (ModelFile file: selectedFiles) {
+            removed = recursiveDelete(file.getFile());
+            if (removed){
+                fileList.remove(file);
+            }
+        }
+        return removed;
+    }
+
+    public boolean recursiveDelete(File file) {
+
+        if (file.isDirectory() && file.list().length > 0) {
+            for (File f : file.listFiles()) {
+                recursiveDelete(f);
+            }
+        }
+        return file.delete();
     }
 
     public void remove()  {
@@ -283,45 +305,78 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
         else {
             deleteDialog.setTitle("Deseja remover "+ selectedFiles.size() + " arquivos ?");
         }
-
+        deleteDialog.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
 
         deleteDialog.setPositiveButton("Sim", (dialog, which) -> {
-            boolean isRemoved = false;
-            for (ModelFile file: selectedFiles) {
-                try {
-                    file.getFile().setReadable(true);
-                    FileOutputStream fileOutputStream = new FileOutputStream(file.getFile().getAbsolutePath() );
-                    fileOutputStream.close();
 
-                    File f = new File(file.getFile().getAbsolutePath());
-                    isRemoved = f.delete();
+            boolean isRemoved = deleteFiles(selectedFiles);
 
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Toast.makeText(getContext(), "Removido: " + isRemoved + " itens", Toast.LENGTH_SHORT).show();
+            if (isRemoved){
+                Toast.makeText(getContext(), "Removido " + selectedFiles.size() + " arquivo(s)", Toast.LENGTH_SHORT).show();
                 fileAdapter.notifyDataSetChanged();
             }
+
+            else{
+                Toast.makeText(getContext(), "Não foi possível remover os arquivos", Toast.LENGTH_SHORT).show();
+            }
+
         });
-        deleteDialog.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
 
         AlertDialog alertDialog_delete = deleteDialog.create();
         alertDialog_delete.show();
     }
 
-    void copyFiles(){
-        ClipboardManager clipboard = (ClipboardManager)
-                getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-        Intent appIntent = new Intent();
-        ClipData clip = ClipData.newIntent("Colaaaaaaar", appIntent);
-        clipboard.setPrimaryClip(clip);
+    private void copyFiles() {
+        ArrayList<ModelFile> selectedFiles = fileAdapter.getFilesSelected();
+
+        String dst = rootPath;
+
+        displayFiles();
+
     }
 
-    @Override
+    private void copy(File src, File dst) throws IOException {
+        InputStream in = new FileInputStream(src);
+        try {
+            OutputStream out = new FileOutputStream(dst);
+            try {
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            } finally {
+                out.close();
+            }
+        } finally {
+            in.close();
+        }
+    }
+
+
+    private void updateMenuItems(Menu menu){
+        int filesSelected = fileAdapter.getFilesSelected().size();
+
+        if (filesSelected > 1){
+            menu.findItem(R.id.rename).setVisible(false);
+            menu.findItem(R.id.remove).setVisible(true);
+        }
+        else if (filesSelected == 0) {
+            menu.findItem(R.id.rename).setVisible(false);
+            menu.findItem(R.id.remove).setVisible(false);
+        }
+        else{
+            menu.findItem(R.id.rename).setVisible(true);
+            menu.findItem(R.id.remove).setVisible(true);
+        }
+}
+
+
+     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+
             case R.id.select_all:
                 selectAll();
                 fileAdapter.notifyDataSetChanged();
@@ -329,15 +384,12 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
             case R.id.rename:
                 rename();
                 break;
-            case R.id.copy:
-                copyFiles();
-                break;
             case R.id.remove:
-                    remove();
-
-
-        }
-        return true;
+                remove();
+                break;
+     }
+         updateMenuItems(menu);
+         return true;
 
 
     }

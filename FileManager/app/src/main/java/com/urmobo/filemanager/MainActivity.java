@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.urmobo.filemanager.fragments.InternalStorageFragment;
+import com.urmobo.filemanager.fragments.SDCardFragment;
 
 public class MainActivity extends  AppCompatActivity implements  NavigationView.OnNavigationItemSelectedListener {
 
@@ -38,6 +39,7 @@ public class MainActivity extends  AppCompatActivity implements  NavigationView.
         navigationView.setCheckedItem(R.id.nav_internal);
     }
 
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
@@ -46,9 +48,9 @@ public class MainActivity extends  AppCompatActivity implements  NavigationView.
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, internalStorageFragment).addToBackStack(null).commit();
                 break;
             case R.id.nav_card:
-                //   SDCardFragment sdCardFragment = new SDCardFragment();
-               // getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, sdCardFragment).addToBackStack(null).commit();
-                break;
+                 SDCardFragment sdCardFragment = new SDCardFragment();
+                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, sdCardFragment).addToBackStack(null).commit();
+                 break;
             case R.id.nav_about:
                 Toast.makeText(this, "Sobre", Toast.LENGTH_SHORT).show();
                 break;

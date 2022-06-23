@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +68,9 @@ public class MultiFileAdapter extends RecyclerView.Adapter<MultiFileAdapter.File
 
         void bind(final ModelFile file) {
 
+            String grayColor = "#EBEBEB";
+            int GRAY = Color.parseColor(grayColor);
+
             tvName.setText(file.getFile().getName());
 
             if (file.getFile().isDirectory()){
@@ -88,10 +93,9 @@ public class MultiFileAdapter extends RecyclerView.Adapter<MultiFileAdapter.File
             }
 
             if (file.isChecked()){
-                itemView.setBackgroundColor(Color.LTGRAY);
+                itemView.setBackgroundColor(GRAY);
             }
-
-            itemView.setBackgroundColor(file.isChecked() ? Color.LTGRAY : Color.WHITE);
+            itemView.setBackgroundColor(file.isChecked() ? GRAY: Color.WHITE);
 
 
            itemView.setOnClickListener(itemView ->
@@ -100,7 +104,7 @@ public class MultiFileAdapter extends RecyclerView.Adapter<MultiFileAdapter.File
 
             itemView.setOnLongClickListener(itemView -> {
                 listener.onFileLongClicked(file);
-                itemView.setBackgroundColor(file.isChecked() ? Color.LTGRAY : Color.WHITE);
+                itemView.setBackgroundColor(file.isChecked() ? GRAY : Color.WHITE);
                 return true;
             });
         }
