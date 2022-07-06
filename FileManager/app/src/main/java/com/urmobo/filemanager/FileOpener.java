@@ -13,16 +13,15 @@ import java.util.Locale;
 public class FileOpener {
     public static void openFile(Context context, ModelFile file) throws IOException{
 
-        File selectedFile = file.getFile();
         Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file.getFile());
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
 
         if (uri.toString().contains(".doc")){
-            intent.setDataAndType(uri, "application/pdf");
+            intent.setDataAndType(uri, "application/msword");
         }
         else if (uri.toString().contains(".pdf")){
-            intent.setDataAndType(uri, "application/msword");
+            intent.setDataAndType(uri, "application/pdf");
         }
         else if (uri.toString().contains(".mp3") || uri.toString().contains(".wav") ){
             intent.setDataAndType(uri, "audio/x-wav");

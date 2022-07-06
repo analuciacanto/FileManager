@@ -15,9 +15,13 @@ import com.google.android.material.navigation.NavigationView;
 import com.urmobo.filemanager.fragments.InternalStorageFragment;
 import com.urmobo.filemanager.fragments.SDCardFragment;
 
+import java.util.ArrayList;
+
 public class MainActivity extends  AppCompatActivity implements  NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
+    private ArrayList<ModelFile> filesToPaste;
+    private ArrayList<ModelFile> filesToMove;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,9 @@ public class MainActivity extends  AppCompatActivity implements  NavigationView.
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new InternalStorageFragment()).commit();
         navigationView.setCheckedItem(R.id.nav_internal);
+
+        filesToPaste = new ArrayList<>();
+        filesToMove = new ArrayList<>();
     }
 
 
@@ -67,8 +74,21 @@ public class MainActivity extends  AppCompatActivity implements  NavigationView.
         {
             drawerLayout.closeDrawer(GravityCompat.START);
         }
-        else {
-            super.onBackPressed();
-        }
+    }
+
+    public ArrayList<ModelFile> getFilesToPaste() {
+        return filesToPaste;
+    }
+
+    public void setFilesToPaste(ArrayList<ModelFile> filesToPaste) {
+        this.filesToPaste = filesToPaste;
+    }
+
+    public ArrayList<ModelFile> getFilesToMove() {
+        return filesToMove;
+    }
+
+    public void setFilesToMove(ArrayList<ModelFile> filesToMove) {
+        this.filesToMove = filesToMove;
     }
 }

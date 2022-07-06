@@ -7,19 +7,29 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
         android:title="Selecionar todos"
         app:showAsAction="never" />
     <item
-        android:id="@+id/copy"
-        android:orderInCategory="200"
-        android:title="Copiar"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/rename"
         android:orderInCategory="200"
         android:title="Renomear"
         app:showAsAction="never" />
     <item
+        android:id="@+id/copy"
+        android:orderInCategory="200"
+        android:title="Copiar"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/paste"
+        android:orderInCategory="200"
+        android:title="Colar aqui"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/move"
         android:orderInCategory="200"
         android:title="Mover"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/moveFor"
+        android:orderInCategory="200"
+        android:title="Mover para cá"
         app:showAsAction="never" />
     <item
         android:id="@+id/remove"

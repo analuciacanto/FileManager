@@ -40,14 +40,19 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.urmobo.filemanager.BuildConfig;
 import com.urmobo.filemanager.FileOpener;
+import com.urmobo.filemanager.MainActivity;
 import com.urmobo.filemanager.ModelFile;
 import com.urmobo.filemanager.MultiFileAdapter;
 import com.urmobo.filemanager.OnFileSelectedListener;
 import com.urmobo.filemanager.R;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,7 +155,6 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
         }).check();
 
     }
-
     public ArrayList<ModelFile> findFiles(File file) {
         ArrayList<ModelFile> arrayList = new ArrayList<>();
         File[] files = file.listFiles();
@@ -193,11 +197,11 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
     @Override
     public void onFileClicked(@NonNull ModelFile file) {
         if (file.getFile().isDirectory()) {
-            SDCardFragment SDCardFragment = new SDCardFragment();
+            SDCardFragment sdCardFragment = new SDCardFragment();
             Bundle bundle = new Bundle();
             bundle.putString("path", file.getFile().getAbsolutePath());
-            SDCardFragment.setArguments(bundle);
-            getFragmentManager().beginTransaction().replace(R.id.fragment_container, SDCardFragment).addToBackStack(null).commit();
+            sdCardFragment.setArguments(bundle);
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container, sdCardFragment).addToBackStack(null).commit();
 
         } else {
             try {
@@ -222,8 +226,6 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         this.menu=menu;
-        menu.removeItem(R.id.move);
-        menu.removeItem(R.id.copy);
         updateMenuItems(menu);
         super.onPrepareOptionsMenu(menu);
     }
@@ -328,23 +330,179 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
         alertDialog_delete.show();
     }
 
+
+    public void copyFiles() {
+        ArrayList<ModelFile> selectedFiles = fileAdapter.getFilesSelected();
+        ((MainActivity)getActivity()).setFilesToPaste(selectedFiles);
+        for (ModelFile file: selectedFiles){
+            file.setChecked(false);
+        }
+        fileAdapter.notifyDataSetChanged();
+        Toast.makeText(getContext(), selectedFiles.size() + " arquivos copiados", Toast.LENGTH_SHORT).show();
+    }
+
+
+    public void pasteFiles(ArrayList<ModelFile> files, File dst){
+
+        for (ModelFile file:  files) {
+            try {
+                pasteFile(file.getFile(),  new File( dst + "/" + file.getFile().getName()));
+                fileList.add(new ModelFile(new File(dst + "/" + file.getFile().getName())));
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        fileAdapter.notifyDataSetChanged();
+
+    }
+
+    public boolean pasteFile(File src, File dst) throws IOException {
+
+        if (src.isDirectory()) {
+            if (!dst.exists()) {
+                dst.mkdirs();
+            }
+
+            ArrayList<ModelFile> filesFromDirectory = findFiles(src);
+            for (ModelFile file: filesFromDirectory){
+                pasteFile(file.getFile(),  new File( dst + "/" + file.getFile().getName()));
+            }
+
+        }
+        else {
+            InputStream in = new FileInputStream(src);
+            try {
+                OutputStream out = new FileOutputStream(dst);
+                try {
+                    // Transfer bytes from in to out
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+
+                } finally {
+                    out.close();
+
+                }
+                return true;
+            } finally {
+                in.close();
+            }
+        }
+        return false;
+    }
+
+
+    public void moveFiles() {
+        ArrayList<ModelFile> selectedFiles = fileAdapter.getFilesSelected();
+        ((MainActivity)getActivity()).setFilesToMove(selectedFiles);
+        for (ModelFile file: selectedFiles){
+            file.setChecked(false);
+        }
+        fileAdapter.notifyDataSetChanged();
+        Toast.makeText(getContext(), selectedFiles.size() + " arquivos selecionados", Toast.LENGTH_SHORT).show();
+    }
+
+
+    public void moveFilesFor(ArrayList<ModelFile> files, File dst){
+
+        for (ModelFile file:  files) {
+            moveFile(file.getFile(), new File(dst + "/" + file.getFile().getName()));
+            fileList.add(new ModelFile(new File(dst + "/" + file.getFile().getName())));
+        }
+
+        fileAdapter.notifyDataSetChanged();
+
+    }
+
+    public void moveFile(File src, File dst){
+        try {
+
+            if (pasteFile(src, dst)){
+                src.delete();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        fileAdapter.notifyDataSetChanged();
+
+    }
     private void updateMenuItems(Menu menu){
         int filesSelected = fileAdapter.getFilesSelected().size();
 
         if (filesSelected > 1){
             menu.findItem(R.id.rename).setVisible(false);
             menu.findItem(R.id.remove).setVisible(true);
+            menu.findItem(R.id.copy).setVisible(true);
+            menu.findItem(R.id.move).setVisible(true);
+
+            if (((MainActivity)getActivity()).getFilesToPaste().size() >= 1 && ((MainActivity)getActivity()).getFilesToMove().size() >= 1){
+                menu.findItem(R.id.paste).setVisible(true);
+                menu.findItem(R.id.moveFor).setVisible(true);
+            }
+            else if  (((MainActivity)getActivity()).getFilesToPaste().size() >= 1 && !(((MainActivity)getActivity()).getFilesToMove().size() >= 1)) {
+                menu.findItem(R.id.paste).setVisible(true);
+                menu.findItem(R.id.moveFor).setVisible(false);
+            }
+            else if  (!(((MainActivity)getActivity()).getFilesToPaste().size() >= 1) && (((MainActivity)getActivity()).getFilesToMove().size() >= 1)) {
+                menu.findItem(R.id.paste).setVisible(false);
+                menu.findItem(R.id.moveFor).setVisible(true);
+            }
+            else{
+                menu.findItem(R.id.paste).setVisible(false);
+                menu.findItem(R.id.moveFor).setVisible(false);
+            }
         }
         else if (filesSelected == 0) {
             menu.findItem(R.id.rename).setVisible(false);
             menu.findItem(R.id.remove).setVisible(false);
+            menu.findItem(R.id.copy).setVisible(false);
+            menu.findItem(R.id.move).setVisible(false);
+
+            if (((MainActivity)getActivity()).getFilesToPaste().size() >= 1 && ((MainActivity)getActivity()).getFilesToMove().size() >= 1){
+                menu.findItem(R.id.paste).setVisible(true);
+                menu.findItem(R.id.moveFor).setVisible(true);
+            }
+            else if  (((MainActivity)getActivity()).getFilesToPaste().size() >= 1 && !(((MainActivity)getActivity()).getFilesToMove().size() >= 1)) {
+                menu.findItem(R.id.paste).setVisible(true);
+                menu.findItem(R.id.moveFor).setVisible(false);
+            }
+            else if  (!(((MainActivity)getActivity()).getFilesToPaste().size() >= 1) && (((MainActivity)getActivity()).getFilesToMove().size() >= 1)) {
+                menu.findItem(R.id.paste).setVisible(false);
+                menu.findItem(R.id.moveFor).setVisible(true);
+            }
+            else{
+                menu.findItem(R.id.paste).setVisible(false);
+                menu.findItem(R.id.moveFor).setVisible(false);
+            }
         }
         else{
             menu.findItem(R.id.rename).setVisible(true);
             menu.findItem(R.id.remove).setVisible(true);
+            menu.findItem(R.id.copy).setVisible(true);
+            menu.findItem(R.id.move).setVisible(true);
+
+            if (((MainActivity)getActivity()).getFilesToPaste().size() >= 1 && ((MainActivity)getActivity()).getFilesToMove().size() >= 1){
+                menu.findItem(R.id.paste).setVisible(true);
+                menu.findItem(R.id.moveFor).setVisible(true);
+            }
+            else if  (((MainActivity)getActivity()).getFilesToPaste().size() >= 1 && !(((MainActivity)getActivity()).getFilesToMove().size() >= 1)) {
+                menu.findItem(R.id.paste).setVisible(true);
+                menu.findItem(R.id.moveFor).setVisible(false);
+            }
+            else if  (!(((MainActivity)getActivity()).getFilesToPaste().size() >= 1) && (((MainActivity)getActivity()).getFilesToMove().size() >= 1)) {
+                menu.findItem(R.id.paste).setVisible(false);
+                menu.findItem(R.id.moveFor).setVisible(true);
+            }
+            else{
+                menu.findItem(R.id.paste).setVisible(false);
+                menu.findItem(R.id.moveFor).setVisible(false);
+            }
         }
     }
-
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -360,6 +518,17 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
             case R.id.remove:
                 remove();
                 break;
+            case R.id.copy:
+                copyFiles();
+                break;
+            case R.id.paste:
+                pasteFiles(((MainActivity)getActivity()).getFilesToPaste(), new File(storage.getAbsolutePath()));
+                break;
+            case R.id.move:
+                moveFiles();
+                break;
+            case R.id.moveFor:
+                moveFilesFor(((MainActivity)getActivity()).getFilesToMove(), new File(storage.getAbsolutePath()));
         }
         updateMenuItems(menu);
         return true;
@@ -367,5 +536,3 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
 
     }
 }
-
-
