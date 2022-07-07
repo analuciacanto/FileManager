@@ -167,7 +167,6 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
         recyclerView = view.findViewById(R.id.recycler_internal);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
         fileList = new ArrayList<>();
         isLoading = true;

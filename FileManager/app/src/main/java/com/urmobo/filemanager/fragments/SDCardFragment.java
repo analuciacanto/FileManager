@@ -173,7 +173,6 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
         recyclerView = view.findViewById(R.id.recycler_internal);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
         fileList = new ArrayList<>();
         isLoading = true;

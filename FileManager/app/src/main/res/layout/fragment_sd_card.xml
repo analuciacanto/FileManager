@@ -24,7 +24,7 @@
             android:layout_height="60dp"
             android:id="@+id/tv_pathHolder"
             android:gravity="center_vertical"
-            android:textColor="@color/darkGrayColor">
+          >
 
         </TextView>
     </LinearLayout>

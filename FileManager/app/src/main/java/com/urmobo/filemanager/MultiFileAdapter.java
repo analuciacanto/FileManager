@@ -1,5 +1,8 @@
 package com.urmobo.filemanager;
+import android.app.Application;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,11 +31,6 @@ public class MultiFileAdapter extends RecyclerView.Adapter<MultiFileAdapter.File
         this.listener = listener;
     }
 
-    public void setModelFile(ArrayList<ModelFile> file) {
-        this.file = new ArrayList<>();
-        this.file = file;
-        notifyDataSetChanged();
-    }
 
     @NonNull
     @Override
@@ -69,7 +67,7 @@ public class MultiFileAdapter extends RecyclerView.Adapter<MultiFileAdapter.File
         void bind(final ModelFile file) {
 
             String grayColor = "#EBEBEB";
-            int GRAY = Color.parseColor(grayColor);
+            int COLOR = Color.parseColor(grayColor);
 
             tvName.setText(file.getFile().getName());
 
@@ -92,10 +90,13 @@ public class MultiFileAdapter extends RecyclerView.Adapter<MultiFileAdapter.File
                 imgFile.setImageResource(R.drawable.ic_file);
             }
 
+
             if (file.isChecked()){
-                itemView.setBackgroundColor(GRAY);
+                itemView.setBackgroundColor(COLOR);
             }
-            itemView.setBackgroundColor(file.isChecked() ? GRAY: Color.WHITE);
+
+
+           itemView.setBackgroundColor(file.isChecked() ? COLOR: Color.TRANSPARENT);
 
 
            itemView.setOnClickListener(itemView ->
@@ -104,7 +105,7 @@ public class MultiFileAdapter extends RecyclerView.Adapter<MultiFileAdapter.File
 
             itemView.setOnLongClickListener(itemView -> {
                 listener.onFileLongClicked(file);
-                itemView.setBackgroundColor(file.isChecked() ? GRAY : Color.WHITE);
+                itemView.setBackgroundColor(file.isChecked() ? COLOR : Color.TRANSPARENT);
                 return true;
             });
         }

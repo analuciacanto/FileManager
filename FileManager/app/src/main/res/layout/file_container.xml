@@ -6,13 +6,11 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/custom_border"
     >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_margin="2dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         >
@@ -46,7 +44,6 @@
                 android:singleLine="true"
                 android:text="File Name.png"
                 android:textAlignment="gravity"
-                android:textColor="@color/darkGrayColor"
                 android:textSize="18sp" />
 
         </LinearLayout>
