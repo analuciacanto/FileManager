@@ -77,6 +77,7 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstance) {
         super.onCreate(savedInstance);
+        fileList = new ArrayList<>();
 
         view = inflater.inflate(R.layout.fragment_sd_card, container, false);
 
@@ -97,9 +98,11 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
             setHasOptionsMenu(true);
 
             try {
-                data = getArguments().getString("path");
-                File file = new File(data);
-                storage = file;
+                if (getArguments() != null) {
+                    data = getArguments().getString("path");
+                    File file = new File(data);
+                    storage = file;
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -174,7 +177,6 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        fileList = new ArrayList<>();
         isLoading = true;
         ArrayList<ModelFile> files = findFiles(storage);
 
@@ -430,6 +432,7 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
 
     }
     private void updateMenuItems(Menu menu){
+        fileAdapter = new MultiFileAdapter(getContext(), fileList, this);
         int filesSelected = fileAdapter.getFilesSelected().size();
 
         if (filesSelected > 1){

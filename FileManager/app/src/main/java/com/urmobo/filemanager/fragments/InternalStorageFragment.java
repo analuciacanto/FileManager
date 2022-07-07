@@ -79,6 +79,8 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
                              @Nullable ViewGroup container, @Nullable Bundle savedInstance) {
         super.onCreate(savedInstance);
 
+        fileList = new ArrayList<>();
+
         view = inflater.inflate(R.layout.fragment_internal_storage, container, false);
 
         tv_pathHolder = view.findViewById(R.id.tv_pathHolder);
@@ -90,9 +92,11 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
         setHasOptionsMenu(true);
 
         try {
-            data = getArguments().getString("path");
-            File file = new File(data);
-            storage = file;
+            if (getArguments() != null) {
+                data = getArguments().getString("path");
+                File file = new File(data);
+                storage = file;
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,7 +110,6 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
 
         runtimePermission();
         tv_pathHolder.setText(storage.getAbsolutePath());
-
         return view;
     }
 
@@ -168,7 +171,6 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        fileList = new ArrayList<>();
         isLoading = true;
         ArrayList<ModelFile> files = findFiles(storage);
 
@@ -421,6 +423,7 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
     }
 
     private void updateMenuItems(Menu menu){
+        fileAdapter = new MultiFileAdapter(getContext(), fileList, this);
         int filesSelected = fileAdapter.getFilesSelected().size();
 
         if (filesSelected > 1){

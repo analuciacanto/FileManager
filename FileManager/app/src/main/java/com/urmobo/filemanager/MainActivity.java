@@ -25,6 +25,9 @@ public class MainActivity extends  AppCompatActivity implements  NavigationView.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        filesToPaste = new ArrayList<>();
+        filesToMove = new ArrayList<>();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -42,8 +45,6 @@ public class MainActivity extends  AppCompatActivity implements  NavigationView.
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new InternalStorageFragment()).commit();
         navigationView.setCheckedItem(R.id.nav_internal);
 
-        filesToPaste = new ArrayList<>();
-        filesToMove = new ArrayList<>();
     }
 
 
