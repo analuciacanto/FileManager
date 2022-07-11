@@ -46,7 +46,6 @@ public class MainActivity extends  AppCompatActivity implements  NavigationView.
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new InternalStorageFragment()).commit();
         navigationView.setCheckedItem(R.id.nav_internal);
-
     }
 
 
@@ -62,7 +61,7 @@ public class MainActivity extends  AppCompatActivity implements  NavigationView.
                  getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, sdCardFragment).addToBackStack(null).commit();
                  break;
             case R.id.nav_about:
-                Toast.makeText(this, "Sobre", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.about, Toast.LENGTH_SHORT).show();
                 break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);

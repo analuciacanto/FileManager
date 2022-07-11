@@ -1,6 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Gerenciador de arquivos</string>
     <string name="Open_Drawer"> Open navigation Drawer</string>
     <string name="Close_Drawer"> Close navigation Drawer</string>
+    <string name="rename">Renomear</string>
+    <string name="renamed">Renomeado</string>
+    <string name="notRenamed">Não foi possível renomear</string>
 
+    <string name="wantRemove">Deseja remover</string>
+    <string name="removed">Removido</string>
+    <string name="notRemoved">Não foi possível remover os arquivos</string>
+    <string name="files">arquivo(s)</string>
+
+    <string name="copiedFiles">arquivos copiados</string>
+    <string name="selectedFiles">arquivos selecionados</string>
+
+    <string name="yes">Sim</string>
+
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancelar</string>
+
+    <string name="about">Sobre</string>
 </resources>

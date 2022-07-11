@@ -71,7 +71,7 @@ public class MultiFileAdapter extends RecyclerView.Adapter<MultiFileAdapter.File
 
             TypedValue tpValue = new TypedValue();
             Resources.Theme t = context.getTheme();
-            t.resolveAttribute(com.google.android.material.R.attr.colorSecondary, tpValue, true);
+            t.resolveAttribute(com.google.android.material.R.attr.colorPrimaryVariant, tpValue, true);
             int colorNotSelected  = tpValue.data;
 
             tvName.setText(file.getFile().getName());

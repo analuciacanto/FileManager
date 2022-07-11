@@ -237,11 +237,12 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
         if (selectedFiles.size() == 1 ) {
             File file = selectedFiles.get(0).getFile();
             AlertDialog.Builder renameDialog = new AlertDialog.Builder(getContext());
-            renameDialog.setTitle("Renomear");
+            renameDialog.setTitle(getString(R.string.rename));
             final EditText name = new EditText(getContext());
+
             renameDialog.setView(name);
 
-            renameDialog.setPositiveButton("Ok", (dialog, which) -> {
+            renameDialog.setPositiveButton(getString(R.string.ok) , (dialog, which) -> {
                 String new_name = name.getEditableText().toString();
                 File current = new File(file.getAbsolutePath());
                 ModelFile destinationModelFile;
@@ -256,15 +257,15 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
                 if (current.renameTo(destinationModelFile.getFile())){
                     fileList.set(fileList.indexOf(selectedFiles.get(0)), destinationModelFile);
                     fileAdapter.notifyDataSetChanged();
-                    Toast.makeText(getContext(), "Renomeado", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.renamed), Toast.LENGTH_SHORT).show();
 
                 }
                 else{
-                    Toast.makeText(getContext(), "Não foi possível renomear", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.notRenamed), Toast.LENGTH_SHORT).show();
                 }
             });
 
-            renameDialog.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
+            renameDialog.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel());
             AlertDialog alertDialog_rename = renameDialog.create();
             alertDialog_rename.show();
         }
@@ -298,24 +299,24 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
         AlertDialog.Builder deleteDialog = new AlertDialog.Builder(getContext());
 
         if (selectedFiles.size() == 1) {
-            deleteDialog.setTitle("Deseja remover " + selectedFiles.get(0).getFile().getName() + "?");
+            deleteDialog.setTitle(getString(R.string.wantRemove) + " " + selectedFiles.get(0).getFile().getName() + "?");
         }
         else {
-            deleteDialog.setTitle("Deseja remover "+ selectedFiles.size() + " arquivos ?");
+            deleteDialog.setTitle(getString(R.string.wantRemove) +  " " + selectedFiles.size() + getString(R.string.files) + "?");
         }
-        deleteDialog.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
+        deleteDialog.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel());
 
-        deleteDialog.setPositiveButton("Sim", (dialog, which) -> {
+        deleteDialog.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
 
             boolean isRemoved = deleteFiles(selectedFiles);
 
             if (isRemoved){
-                Toast.makeText(getContext(), "Removido " + selectedFiles.size() + " arquivo(s)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.removed) + selectedFiles.size() + getString(R.string.files) , Toast.LENGTH_SHORT).show();
                 fileAdapter.notifyDataSetChanged();
             }
 
             else{
-                Toast.makeText(getContext(), "Não foi possível remover os arquivos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.notRemoved), Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -332,7 +333,7 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
             file.setChecked(false);
         }
         fileAdapter.notifyDataSetChanged();
-        Toast.makeText(getContext(), selectedFiles.size() + " arquivos copiados", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), selectedFiles.size() + " " + getString(R.string.copiedFiles), Toast.LENGTH_SHORT).show();
     }
 
 
@@ -392,7 +393,7 @@ public class InternalStorageFragment extends Fragment implements OnFileSelectedL
             file.setChecked(false);
         }
         fileAdapter.notifyDataSetChanged();
-        Toast.makeText(getContext(), selectedFiles.size() + " arquivos selecionados", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), selectedFiles.size() + " " + getString(R.string.selectedFiles), Toast.LENGTH_SHORT).show();
     }
 
 
