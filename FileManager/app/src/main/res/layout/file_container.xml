@@ -13,6 +13,7 @@
         android:layout_height="60dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:layout_marginLeft="10dp"
         >
 
 

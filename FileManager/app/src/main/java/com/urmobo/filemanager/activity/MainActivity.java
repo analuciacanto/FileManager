@@ -1,4 +1,4 @@
-package com.urmobo.filemanager;
+package com.urmobo.filemanager.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
+import com.urmobo.filemanager.ModelFile;
+import com.urmobo.filemanager.R;
 import com.urmobo.filemanager.fragments.InternalStorageFragment;
 import com.urmobo.filemanager.fragments.SDCardFragment;
 

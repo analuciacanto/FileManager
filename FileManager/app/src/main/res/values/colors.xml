@@ -5,4 +5,8 @@
     <color name="darkGrayColor">#757575</color>
     <color name="blueColor">#4cb0e2</color>
     <color name="black">#000000</color>
+    <color name="darkThemeSelect">#505050</color>
+    <color name="lightThemeSelect">#EBEBEB</color>
+    <color name="darkGrayColorPriamary">#282828	</color>
+
 </resources>

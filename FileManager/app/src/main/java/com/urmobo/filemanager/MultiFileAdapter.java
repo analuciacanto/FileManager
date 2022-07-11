@@ -1,9 +1,8 @@
 package com.urmobo.filemanager;
-import android.app.Application;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,8 +64,15 @@ public class MultiFileAdapter extends RecyclerView.Adapter<MultiFileAdapter.File
 
         void bind(final ModelFile file) {
 
-            String grayColor = "#EBEBEB";
-            int COLOR = Color.parseColor(grayColor);
+            TypedValue typedValue = new TypedValue();
+            Resources.Theme theme = context.getTheme();
+            theme.resolveAttribute(com.google.android.material.R.attr.colorSecondaryVariant, typedValue, true);
+            int COLOR  = typedValue.data;
+
+            TypedValue tpValue = new TypedValue();
+            Resources.Theme t = context.getTheme();
+            t.resolveAttribute(com.google.android.material.R.attr.colorSecondary, tpValue, true);
+            int colorNotSelected  = tpValue.data;
 
             tvName.setText(file.getFile().getName());
 
@@ -90,14 +95,11 @@ public class MultiFileAdapter extends RecyclerView.Adapter<MultiFileAdapter.File
                 imgFile.setImageResource(R.drawable.ic_file);
             }
 
-
             if (file.isChecked()){
                 itemView.setBackgroundColor(COLOR);
             }
 
-
-           itemView.setBackgroundColor(file.isChecked() ? COLOR: Color.TRANSPARENT);
-
+           itemView.setBackgroundColor(file.isChecked() ? COLOR: colorNotSelected);
 
            itemView.setOnClickListener(itemView ->
                    listener.onFileClicked(file)
@@ -105,7 +107,7 @@ public class MultiFileAdapter extends RecyclerView.Adapter<MultiFileAdapter.File
 
             itemView.setOnLongClickListener(itemView -> {
                 listener.onFileLongClicked(file);
-                itemView.setBackgroundColor(file.isChecked() ? COLOR : Color.TRANSPARENT);
+                itemView.setBackgroundColor(file.isChecked() ? COLOR : colorNotSelected);
                 return true;
             });
         }

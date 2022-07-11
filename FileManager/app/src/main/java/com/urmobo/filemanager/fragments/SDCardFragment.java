@@ -29,7 +29,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,7 +39,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.urmobo.filemanager.BuildConfig;
 import com.urmobo.filemanager.FileOpener;
-import com.urmobo.filemanager.MainActivity;
+import com.urmobo.filemanager.activity.MainActivity;
 import com.urmobo.filemanager.ModelFile;
 import com.urmobo.filemanager.MultiFileAdapter;
 import com.urmobo.filemanager.OnFileSelectedListener;
@@ -77,7 +76,9 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstance) {
         super.onCreate(savedInstance);
+
         fileList = new ArrayList<>();
+        fileAdapter = new MultiFileAdapter(getContext(), fileList, this);
 
         view = inflater.inflate(R.layout.fragment_sd_card, container, false);
 
@@ -189,7 +190,6 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
         isLoading = false;
 
         if (!isLoading) {
-            fileAdapter = new MultiFileAdapter(getContext(), fileList, this);
             recyclerView.setAdapter(fileAdapter);
 
         }
@@ -432,7 +432,6 @@ public class SDCardFragment extends Fragment implements OnFileSelectedListener {
 
     }
     private void updateMenuItems(Menu menu){
-        fileAdapter = new MultiFileAdapter(getContext(), fileList, this);
         int filesSelected = fileAdapter.getFilesSelected().size();
 
         if (filesSelected > 1){

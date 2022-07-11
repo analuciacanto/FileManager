@@ -7,7 +7,7 @@
     android:id="@+id/drawer_layout"
     tools:openDrawer="start"
     android:fitsSystemWindows="true"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
 
     <LinearLayout
         android:orientation="vertical"
@@ -17,7 +17,9 @@
             android:elevation="4dp"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimaryVariant"
+            >
         </androidx.appcompat.widget.Toolbar>
         <FrameLayout
             android:id="@+id/fragment_container"
